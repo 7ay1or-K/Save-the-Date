@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date | Deimante & Dominic</title>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600;700&display=swap');
 
         :root {
           --color-bg: #f7f3ec;
@@ -44,7 +46,6 @@
             transform: translateY(-5px);
         }
 
-        /* The back shadow */
         .envelope-back {
             position: absolute;
             width: 100%;
@@ -55,7 +56,6 @@
             z-index: -1;
         }
 
-        /* The beautiful floral inner pocket liner using image_2.png */
         .envelope-inner {
             position: absolute;
             top: 2px; right: 2px; bottom: 2px; left: 2px;
@@ -66,7 +66,6 @@
             z-index: 0;
         }
 
-        /* Softens the inner pocket flowers so they don't overpower */
         .envelope-inner::after {
             content: '';
             position: absolute;
@@ -75,7 +74,6 @@
             border-radius: 4px;
         }
 
-        /* The Letter Card */
         .letter {
             position: absolute;
             bottom: 10px;
@@ -83,7 +81,6 @@
             width: 300px;
             height: 200px;
             background-color: var(--color-letter);
-            /* Soft floral watermark overlay */
             background-image: 
                 linear-gradient(rgba(253, 252, 240, 0.88), rgba(253, 252, 240, 0.88)),
                 url('image_2.png');
@@ -110,7 +107,7 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             color: #8a7a63;
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             position: relative;
         }
         
@@ -127,6 +124,15 @@
         .letter h2::before { left: -30px; }
         .letter h2::after { right: -30px; }
 
+        .letter h3 {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #777;
+            margin: 0 0 10px 0;
+            font-weight: 400;
+        }
+
         .letter h1 {
             font-family: 'Great Vibes', cursive;
             font-size: 2.2rem;
@@ -142,7 +148,6 @@
             font-weight: 600;
         }
 
-        /* Envelope Front Pockets */
         .envelope-front {
             position: absolute;
             bottom: 0;
@@ -156,7 +161,6 @@
             pointer-events: none;
         }
 
-        /* The Top Flap Mechanism */
         .flap-wrapper {
             position: absolute;
             top: 0;
@@ -171,7 +175,6 @@
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.9s, z-index 0s 0s;
         }
 
-        /* The Solid Exterior Flap */
         .flap {
             position: absolute;
             top: 0; left: 0;
@@ -181,11 +184,9 @@
             border-width: 120px 160px 0 160px;
             border-color: var(--color-env-flap) transparent transparent transparent;
             opacity: 1;
-            /* Midway swap when closing */
             transition: opacity 0s 1.25s;
         }
 
-        /* The Floral Interior Liner */
         .flap-liner {
             position: absolute;
             top: 0; left: 0;
@@ -193,15 +194,12 @@
             background-image: url('image_2.png');
             background-size: cover;
             background-position: center bottom;
-            /* Points UP locally so when opened, it is right-side up */
             clip-path: polygon(0 100%, 100% 100%, 50% 0%);
-            /* Flips it to point DOWN when closed to hide behind wrapper */
             transform: rotateX(180deg);
             opacity: 0;
             transition: opacity 0s 1.25s;
         }
 
-        /* Highly Realistic Wax Stamp */
         .wax-stamp {
             position: absolute;
             top: 85px;
@@ -236,14 +234,13 @@
             transform: translate(-1px, -1px);
         }
 
-        /* Proportional, Smaller Stamped Text */
         .wax-stamp::after {
             content: 'D&D';
             position: relative;
             z-index: 1;
             color: #d17351;
             font-family: 'Great Vibes', cursive;
-            font-size: 1.05rem; /* Reduced to be highly proportional */
+            font-size: 1.05rem;
             text-shadow: 
                 -1px -1px 1px rgba(255, 220, 200, 0.4), 
                 1px 2px 2px rgba(80, 20, 0, 0.8),
@@ -263,14 +260,12 @@
             pointer-events: none;
         }
 
-        /* --- OPENING ANIMATION STATES --- */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
             z-index: 0; 
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0s, z-index 0s 0.7s;
         }
 
-        /* Midway Swap (0.35s) for opening to seamlessly reveal liner and hide stamp */
         .envelope-wrapper.open .flap {
             opacity: 0;
             transition: opacity 0s 0.35s;
@@ -326,6 +321,7 @@
         
         <div class="letter">
             <h2>Save the Date</h2>
+            <h3>For the wedding of</h3>
             <h1>Deimante & Dominic</h1>
             <p>2nd September 2027</p>
         </div>
@@ -348,6 +344,9 @@
         const audio = document.getElementById('weddingMusic');
         const instructionText = document.getElementById('instructionText');
 
+        // Confetti colors matching the floral image
+        const confettiColors = ['#d81e5b', '#e38a6a', '#ecaa8d', '#9ebce1', '#ffffff'];
+
         envelope.addEventListener('click', () => {
             const isOpen = envelope.classList.contains('open');
 
@@ -359,6 +358,18 @@
                 audio.play().catch(error => {
                     console.log("Audio playback requires user interaction and a valid file.", error);
                 });
+
+                // Fire confetti as the letter emerges
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 },
+                        colors: confettiColors,
+                        disableForReducedMotion: true
+                    });
+                }, 600);
+
             } else {
                 envelope.classList.remove('open');
                 audio.pause();
