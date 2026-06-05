@@ -96,10 +96,11 @@
             padding: 20px;
             box-sizing: border-box;
             
+            /* Closing state (Default): Drops back in gracefully */
             z-index: 1; 
             opacity: 0;
             transform: translateY(20px);
-            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1) 0s, opacity 0.6s ease 0.4s, z-index 0s 0s;
+            transition: transform 0.8s ease-in-out 0s, opacity 0.4s ease 0.4s, z-index 0s 0s;
         }
 
         .letter h2 {
@@ -171,8 +172,9 @@
             pointer-events: none;
             filter: drop-shadow(0 4px 4px var(--color-env-shadow));
             
+            /* Closing state (Default): Waits for letter to slide in before folding */
             z-index: 3;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.9s, z-index 0s 0s;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s, z-index 0s 0s;
         }
 
         .flap {
@@ -184,7 +186,8 @@
             border-width: 120px 160px 0 160px;
             border-color: var(--color-env-flap) transparent transparent transparent;
             opacity: 1;
-            transition: opacity 0s 1.25s;
+            /* Swap at halfway point of closing animation (0.8s + 0.3s) */
+            transition: opacity 0s 1.1s;
         }
 
         .flap-liner {
@@ -197,7 +200,7 @@
             clip-path: polygon(0 100%, 100% 100%, 50% 0%);
             transform: rotateX(180deg);
             opacity: 0;
-            transition: opacity 0s 1.25s;
+            transition: opacity 0s 1.1s;
         }
 
         .wax-stamp {
@@ -216,7 +219,7 @@
             justify-content: center;
             align-items: center;
             opacity: 1;
-            transition: opacity 0s 1.25s;
+            transition: opacity 0s 1.1s;
         }
 
         .wax-stamp::before {
@@ -260,30 +263,31 @@
             pointer-events: none;
         }
 
+        /* --- OPENING ANIMATION STATES --- */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
             z-index: 0; 
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0s, z-index 0s 0.7s;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0s, z-index 0s 0.6s;
         }
 
         .envelope-wrapper.open .flap {
             opacity: 0;
-            transition: opacity 0s 0.35s;
+            transition: opacity 0s 0.3s;
         }
         .envelope-wrapper.open .wax-stamp {
             opacity: 0;
-            transition: opacity 0s 0.35s;
+            transition: opacity 0s 0.3s;
         }
         .envelope-wrapper.open .flap-liner {
             opacity: 1;
-            transition: opacity 0s 0.35s;
+            transition: opacity 0s 0.3s;
         }
 
         .envelope-wrapper.open .letter {
             opacity: 1;
             transform: translateY(-80px); 
             z-index: 4; 
-            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s, opacity 0.8s ease 0.5s, z-index 0s 1.1s;
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s, opacity 0.8s ease 0.6s, z-index 0s 1.2s;
         }
 
         .instructions {
@@ -344,7 +348,6 @@
         const audio = document.getElementById('weddingMusic');
         const instructionText = document.getElementById('instructionText');
 
-        // Confetti colors matching the floral image
         const confettiColors = ['#d81e5b', '#e38a6a', '#ecaa8d', '#9ebce1', '#ffffff'];
 
         envelope.addEventListener('click', () => {
@@ -359,7 +362,7 @@
                     console.log("Audio playback requires user interaction and a valid file.", error);
                 });
 
-                // Fire confetti as the letter emerges
+                // Delayed confetti to trigger exactly when the letter emerges
                 setTimeout(() => {
                     confetti({
                         particleCount: 150,
@@ -368,7 +371,7 @@
                         colors: confettiColors,
                         disableForReducedMotion: true
                     });
-                }, 600);
+                }, 1100); 
 
             } else {
                 envelope.classList.remove('open');
@@ -379,7 +382,7 @@
                         instructionText.innerText = "Tap to Reopen";
                         instructionText.style.opacity = '1';
                     }
-                }, 1600);
+                }, 1500);
             }
         });
     </script>
