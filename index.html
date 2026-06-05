@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,10 +14,8 @@
           --color-env-flap: #dcd0bf;
           --color-env-shadow: rgba(0,0,0,0.15);
           --color-orange: #e38a6a;
-          --color-light-orange: #ecaa8d; /* Replaces the pink */
-          --color-blue: #9ebce1;
+          --color-light-orange: #ecaa8d; 
           --color-letter: #fdfcf0;
-          --color-text-names: #333;
           --color-text-date: #555;
         }
 
@@ -40,7 +37,6 @@
             height: 220px;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            /* Hover effect only active when closed */
             transition: transform 0.4s ease;
         }
 
@@ -48,6 +44,7 @@
             transform: translateY(-5px);
         }
 
+        /* The back shadow */
         .envelope-back {
             position: absolute;
             width: 100%;
@@ -55,9 +52,30 @@
             background-color: var(--color-env-pocket);
             border-radius: 4px;
             box-shadow: 0 15px 30px var(--color-env-shadow);
+            z-index: -1;
+        }
+
+        /* The beautiful floral inner pocket liner using image_2.png */
+        .envelope-inner {
+            position: absolute;
+            top: 2px; right: 2px; bottom: 2px; left: 2px;
+            background-image: url('image_2.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
             z-index: 0;
         }
 
+        /* Softens the inner pocket flowers so they don't overpower */
+        .envelope-inner::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(237, 232, 224, 0.6); 
+            border-radius: 4px;
+        }
+
+        /* The Letter Card */
         .letter {
             position: absolute;
             bottom: 10px;
@@ -65,6 +83,12 @@
             width: 300px;
             height: 200px;
             background-color: var(--color-letter);
+            /* Soft floral watermark overlay */
+            background-image: 
+                linear-gradient(rgba(253, 252, 240, 0.88), rgba(253, 252, 240, 0.88)),
+                url('image_2.png');
+            background-size: cover;
+            background-position: center;
             border-radius: 4px;
             box-shadow: 0 2px 10px var(--color-env-shadow);
             display: flex;
@@ -75,8 +99,6 @@
             padding: 20px;
             box-sizing: border-box;
             
-            /* CLOSING ANIMATION (Default State) */
-            /* Z-index drops immediately to 1 so it slides down behind the front pocket */
             z-index: 1; 
             opacity: 0;
             transform: translateY(20px);
@@ -108,7 +130,7 @@
         .letter h1 {
             font-family: 'Great Vibes', cursive;
             font-size: 2.2rem;
-            color: var(--color-light-orange); /* Changed from pink to light orange */
+            color: var(--color-light-orange); 
             margin: 0 0 15px 0;
             font-weight: normal;
         }
@@ -117,26 +139,10 @@
             font-size: 1rem;
             color: var(--color-text-date);
             margin: 0;
-            font-weight: 400;
+            font-weight: 600;
         }
 
-        .letter::after {
-            content: '.. . .';
-            font-size: 2rem;
-            color: transparent;
-            position: absolute;
-            bottom: 10px;
-            background-image: radial-gradient(circle at center, var(--color-light-orange) 0, var(--color-light-orange) 3px, transparent 3px, transparent 100%),
-                              radial-gradient(circle at center, var(--color-orange) 0, var(--color-orange) 2px, transparent 2px, transparent 100%),
-                              radial-gradient(circle at center, var(--color-blue) 0, var(--color-blue) 2px, transparent 2px, transparent 100%);
-            background-position: 0 0, 15px 0, 30px 0;
-            background-repeat: no-repeat;
-            background-size: 10px 10px;
-            width: 40px; height: 10px;
-            left: calc(50% - 20px);
-            opacity: 0.6;
-        }
-
+        /* Envelope Front Pockets */
         .envelope-front {
             position: absolute;
             bottom: 0;
@@ -150,6 +156,7 @@
             pointer-events: none;
         }
 
+        /* The Top Flap Mechanism */
         .flap-wrapper {
             position: absolute;
             top: 0;
@@ -160,18 +167,38 @@
             pointer-events: none;
             filter: drop-shadow(0 4px 4px var(--color-env-shadow));
             
-            /* CLOSING ANIMATION (Default State) */
-            /* Z-index returns to 3 immediately, but wait 0.9s for letter to slide down before flipping back */
             z-index: 3;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.9s, z-index 0s 0s;
         }
 
+        /* The Solid Exterior Flap */
         .flap {
+            position: absolute;
+            top: 0; left: 0;
             width: 0;
             height: 0;
             border-style: solid;
             border-width: 120px 160px 0 160px;
             border-color: var(--color-env-flap) transparent transparent transparent;
+            opacity: 1;
+            /* Midway swap when closing */
+            transition: opacity 0s 1.25s;
+        }
+
+        /* The Floral Interior Liner */
+        .flap-liner {
+            position: absolute;
+            top: 0; left: 0;
+            width: 320px; height: 120px;
+            background-image: url('image_2.png');
+            background-size: cover;
+            background-position: center bottom;
+            /* Points UP locally so when opened, it is right-side up */
+            clip-path: polygon(0 100%, 100% 100%, 50% 0%);
+            /* Flips it to point DOWN when closed to hide behind wrapper */
+            transform: rotateX(180deg);
+            opacity: 0;
+            transition: opacity 0s 1.25s;
         }
 
         /* Highly Realistic Wax Stamp */
@@ -181,9 +208,7 @@
             left: 128px;
             width: 64px;
             height: 64px;
-            /* Irregular, organic blob shape */
             border-radius: 49% 51% 54% 46% / 52% 48% 53% 47%;
-            /* Complex lighting gradient: deep shadows at the bottom right, bright highlight top left */
             background: radial-gradient(circle at 30% 30%, #f4b297 0%, #e38a6a 20%, #c86946 50%, #873617 90%, #5e240e 100%);
             box-shadow: 
                 3px 4px 6px rgba(0,0,0,0.35),
@@ -192,9 +217,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            opacity: 1;
+            transition: opacity 0s 1.25s;
         }
 
-        /* Inner pressed rim */
         .wax-stamp::before {
             content: '';
             position: absolute;
@@ -210,22 +236,20 @@
             transform: translate(-1px, -1px);
         }
 
-        /* Highly Embossed Stamped Text */
+        /* Proportional, Smaller Stamped Text */
         .wax-stamp::after {
             content: 'D&D';
             position: relative;
             z-index: 1;
             color: #d17351;
             font-family: 'Great Vibes', cursive;
-            font-size: 1.5rem;
-            /* Inset shadow effect to make it look deeply stamped into the wax */
+            font-size: 1.05rem; /* Reduced to be highly proportional */
             text-shadow: 
                 -1px -1px 1px rgba(255, 220, 200, 0.4), 
                 1px 2px 2px rgba(80, 20, 0, 0.8),
                 0 0 1px rgba(100, 30, 0, 0.5);
         }
 
-        /* Glossy reflection on the wax */
         .wax-highlight {
             position: absolute;
             top: 5px;
@@ -242,15 +266,27 @@
         /* --- OPENING ANIMATION STATES --- */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
-            /* Z-index drops to 0 at 0.7s (after the flap flips completely) */
             z-index: 0; 
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0s, z-index 0s 0.7s;
+        }
+
+        /* Midway Swap (0.35s) for opening to seamlessly reveal liner and hide stamp */
+        .envelope-wrapper.open .flap {
+            opacity: 0;
+            transition: opacity 0s 0.35s;
+        }
+        .envelope-wrapper.open .wax-stamp {
+            opacity: 0;
+            transition: opacity 0s 0.35s;
+        }
+        .envelope-wrapper.open .flap-liner {
+            opacity: 1;
+            transition: opacity 0s 0.35s;
         }
 
         .envelope-wrapper.open .letter {
             opacity: 1;
             transform: translateY(-80px); 
-            /* Z-index pops to 4 at 1.1s (as it clears the front pocket) */
             z-index: 4; 
             transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s, opacity 0.8s ease 0.5s, z-index 0s 1.1s;
         }
@@ -280,13 +316,13 @@
 </head>
 <body>
 
-    <!-- Hidden audio element. Ensure you have a file named 'wedding-music.mp3' in the same folder -->
     <audio id="weddingMusic" loop>
         <source src="wedding-music.mp3" type="audio/mpeg">
     </audio>
 
     <div class="envelope-wrapper" id="envelope">
         <div class="envelope-back"></div>
+        <div class="envelope-inner"></div>
         
         <div class="letter">
             <h2>Save the Date</h2>
@@ -297,6 +333,7 @@
         <div class="envelope-front"></div>
         
         <div class="flap-wrapper">
+            <div class="flap-liner"></div>
             <div class="flap"></div>
             <div class="wax-stamp">
                 <div class="wax-highlight"></div>
@@ -315,7 +352,6 @@
             const isOpen = envelope.classList.contains('open');
 
             if (!isOpen) {
-                // OPENING ACTION
                 envelope.classList.add('open');
                 instructionText.style.opacity = '0';
                 
@@ -324,13 +360,9 @@
                     console.log("Audio playback requires user interaction and a valid file.", error);
                 });
             } else {
-                // CLOSING ACTION
                 envelope.classList.remove('open');
-                
-                // Pause the music when closed (optional, remove this line if you want it to keep playing)
                 audio.pause();
                 
-                // Bring instructions back after it fully closes (approx 1.6s total animation time)
                 setTimeout(() => {
                     if (!envelope.classList.contains('open')) {
                         instructionText.innerText = "Tap to Reopen";
