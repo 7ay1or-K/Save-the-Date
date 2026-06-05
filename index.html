@@ -5,24 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date | Deimante & Dominic</title>
     <style>
-        /* Import elegant fonts for the wedding aesthetic */
         @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;700&display=swap');
 
-        /* Custom color scheme based on image_0.png flowers */
         :root {
-          --color-bg: #f7f3ec; /* soft cream background */
-          --color-env-main: #ede8e0; /* main envelope & liner paper color, soft textured cream */
-          --color-env-pocket: #d4c6b3; /* pocket and rear edge color */
-          --color-env-flap: #dcd0bf; /* closed flap front color */
+          --color-bg: #f7f3ec;
+          --color-env-main: #ede8e0;
+          --color-env-pocket: #d4c6b3;
+          --color-env-flap: #dcd0bf;
           --color-env-shadow: rgba(0,0,0,0.15);
-          --color-magenta: #d81e5b; /* deep pink ranunculus */
-          --color-orange: #e38a6a; /* dahlia orange */
-          --color-blue: #9ebce1; /* delphinium light blue */
-          --color-pollen: #fdd835; /* pollen yellow from ranunculus/daisy */
-          --color-wax: #e38a6a; /* dahlia orange for wax */
-          --color-letter: #fdfcf0; /* letter paper color, light cream */
-          --color-text-names: #333; /* dark text for names */
-          --color-text-date: #555; /* softer text for date */
+          --color-magenta: #d81e5b;
+          --color-orange: #e38a6a;
+          --color-blue: #9ebce1;
+          --color-letter: #fdfcf0;
+          --color-text-names: #333;
+          --color-text-date: #555;
         }
 
         body {
@@ -42,7 +38,6 @@
             width: 320px;
             height: 220px;
             cursor: pointer;
-            /* Removes tap highlight box on mobile */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -55,26 +50,9 @@
             box-shadow: 0 15px 30px var(--color-env-shadow);
         }
 
-        /* Subtly patterned liner with flower colors from image_0.png */
-        .envelope-back::after {
-            content: '';
-            position: absolute;
-            top: 5px; right: 5px; bottom: 5px; left: 5px;
-            background: repeating-radial-gradient(circle at center, 
-                var(--color-magenta) 0, var(--color-magenta) 2px, transparent 2px, transparent 10px),
-                repeating-radial-gradient(circle at center, 
-                var(--color-orange) 0, var(--color-orange) 1px, transparent 1px, transparent 12px),
-                repeating-radial-gradient(circle at center, 
-                var(--color-blue) 0, var(--color-blue) 1px, transparent 1px, transparent 14px),
-                var(--color-env-main);
-            opacity: 0.15; /* subtle liner effect */
-            border-radius: 2px;
-        }
-
-        /* Revised Letter Structure (Hidden Inside) */
         .letter {
             position: absolute;
-            bottom: 5px; /* Sits at bottom front, hidden */
+            bottom: 5px;
             left: 10px;
             width: 300px;
             height: 200px;
@@ -88,17 +66,12 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
-            z-index: 1; /* behind the front pockets */
-            
-            /* Initial state: Hidden within the pocket */
+            z-index: 1;
             opacity: 0;
             transform: translateY(0);
-            
-            /* Revised reveal animation: presents itself, doesn't slide OUT of the pocket */
             transition: transform 0.8s ease 0.4s, opacity 0.5s ease 0.4s;
         }
 
-        /* Content for the letter, with floral touches */
         .letter h2 {
             font-size: 0.8rem;
             letter-spacing: 3px;
@@ -124,7 +97,7 @@
         .letter h1 {
             font-family: 'Great Vibes', cursive;
             font-size: 2.2rem;
-            color: var(--color-magenta); /* Use flower deep pink */
+            color: var(--color-magenta);
             margin: 0 0 15px 0;
             font-weight: normal;
         }
@@ -136,7 +109,6 @@
             font-weight: 400;
         }
 
-        /* Subtle floral dot decoration at bottom of letter */
         .letter::after {
             content: '.. . .';
             font-size: 2rem;
@@ -154,7 +126,6 @@
             opacity: 0.5;
         }
 
-        /* Envelope Pockets (Bottom and sides, warmer cream) */
         .envelope-front {
             position: absolute;
             bottom: 0;
@@ -168,7 +139,6 @@
             pointer-events: none;
         }
 
-        /* Wrapper to hold both the top flap and the wax seal */
         .flap-wrapper {
             position: absolute;
             top: 0;
@@ -182,7 +152,6 @@
             filter: drop-shadow(0 4px 4px var(--color-env-shadow));
         }
 
-        /* Top Flap (Slightly warmer paper, liner on reverse) */
         .flap {
             width: 0;
             height: 0;
@@ -191,77 +160,73 @@
             border-color: var(--color-env-flap) transparent transparent transparent;
         }
 
-        /* Inner Liner for Flap - patterned reverse */
-        .flap::after {
-            content: '';
-            position: absolute;
-            top: -115px; /* Offset to sit inside */
-            left: -155px;
-            width: 310px;
-            height: 110px;
-            background: repeating-radial-gradient(circle at center, 
-                var(--color-magenta) 0, var(--color-magenta) 2px, transparent 2px, transparent 10px),
-                repeating-radial-gradient(circle at center, 
-                var(--color-orange) 0, var(--color-orange) 1px, transparent 1px, transparent 12px),
-                repeating-radial-gradient(circle at center, 
-                var(--color-blue) 0, var(--color-blue) 1px, transparent 1px, transparent 14px),
-                var(--color-env-main);
-            opacity: 0.15;
-            border-radius: 2px;
-            transform-origin: bottom;
-            transform: rotateX(180deg); /* Apply liner pattern to reverse */
-            z-index: -1;
-        }
-
-        /* Wax Stamp (Orange from image_0.png) */
+        /* Realistic Wax Stamp */
         .wax-stamp {
             position: absolute;
-            top: 100px; /* Positioned at the point of the flap */
-            left: 135px; /* Center of the 320px width minus half stamp width */
-            width: 50px;
-            height: 50px;
-            background-color: var(--color-wax); /* flower orange */
-            border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 0 8px rgba(160, 64, 0, 0.8);
+            top: 90px;
+            left: 130px;
+            width: 60px;
+            height: 60px;
+            /* Organic, slightly irregular shape */
+            border-radius: 52% 48% 55% 45% / 48% 53% 47% 52%;
+            /* 3D gradient for lighting */
+            background: radial-gradient(circle at 35% 35%, #f4a284 0%, #e38a6a 30%, #c86946 70%, #a44d2d 100%);
+            /* Complex shadows: drop shadow + inner shading/highlighting for depth */
+            box-shadow: 
+                2px 3px 5px rgba(0,0,0,0.3),
+                inset 0 -4px 6px rgba(130, 40, 0, 0.6),
+                inset 0 4px 6px rgba(255, 255, 255, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 2px solid var(--color-pollen); /* pollen yellow rim */
         }
 
+        /* Inner embossed ridge */
+        .wax-stamp::before {
+            content: '';
+            position: absolute;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid rgba(160, 60, 0, 0.3);
+            box-shadow: 
+                inset 0 2px 5px rgba(0,0,0,0.2), 
+                0 1px 2px rgba(255,255,255,0.2);
+            /* Slightly offset to match the lighting direction */
+            transform: translate(-1px, -1px);
+        }
+
+        /* Embossed Stamped Text */
         .wax-stamp::after {
             content: 'D&D';
-            color: #fce2c4;
+            position: relative;
+            z-index: 1;
+            color: #d17351; /* Color matches the wax for embossing effect */
             font-family: 'Great Vibes', cursive;
-            font-size: 1.2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-size: 1.5rem;
+            /* Highlight on top/left, shadow on bottom/right creates an indented stamp effect */
+            text-shadow: 
+                -1px -1px 1px rgba(255, 255, 255, 0.3), 
+                1px 1px 2px rgba(100, 30, 0, 0.7);
         }
 
-        /* =========================================
-           INTERACTION STATES (No music logic)
-           ========================================= */
-        
-        /* Flap flips open */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
             z-index: 0;
         }
 
-        /* Letter is revealed within the pocket, presents itself gently */
         .envelope-wrapper.open .letter {
-            opacity: 1; /* reveal */
-            /* subtle elevation and tilt, staying enclosed */
+            opacity: 1;
             transform: perspective(1000px) rotateX(5deg) translateY(-25px); 
-            z-index: 4; /* front, but still presents within pocket depth */
+            z-index: 4;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, opacity 0.5s ease 0.4s, z-index 0s 1s;
         }
 
-        /* Instruct guests, color from palette */
         .instructions {
             position: absolute;
             bottom: 15%;
             font-size: 0.8rem;
-            color: var(--color-orange); /* instructions using flower orange */
+            color: var(--color-orange);
             letter-spacing: 2px;
             text-transform: uppercase;
             animation: pulse 2s infinite;
@@ -284,7 +249,6 @@
     <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
         <div class="envelope-back"></div>
         
-        <!-- Letter is now structurally inside -->
         <div class="letter">
             <h2>Save the Date</h2>
             <h1>Deimante & Dominic</h1>
