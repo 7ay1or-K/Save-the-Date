@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +14,8 @@
           --color-env-pocket: #d4c6b3;
           --color-env-flap: #dcd0bf;
           --color-env-shadow: rgba(0,0,0,0.15);
-          --color-magenta: #d81e5b;
           --color-orange: #e38a6a;
+          --color-light-orange: #ecaa8d; /* Replaces the pink */
           --color-blue: #9ebce1;
           --color-letter: #fdfcf0;
           --color-text-names: #333;
@@ -39,10 +40,11 @@
             height: 220px;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            /* Hover effect only active when closed */
             transition: transform 0.4s ease;
         }
 
-        .envelope-wrapper:hover {
+        .envelope-wrapper:not(.open):hover {
             transform: translateY(-5px);
         }
 
@@ -72,12 +74,13 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
-            z-index: 1; /* Sits behind the front pocket */
             
-            /* Initial state: deep inside the envelope */
+            /* CLOSING ANIMATION (Default State) */
+            /* Z-index drops immediately to 1 so it slides down behind the front pocket */
+            z-index: 1; 
             opacity: 0;
             transform: translateY(20px);
-            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s, opacity 0.8s ease 0.4s;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1) 0s, opacity 0.6s ease 0.4s, z-index 0s 0s;
         }
 
         .letter h2 {
@@ -105,7 +108,7 @@
         .letter h1 {
             font-family: 'Great Vibes', cursive;
             font-size: 2.2rem;
-            color: var(--color-magenta);
+            color: var(--color-light-orange); /* Changed from pink to light orange */
             margin: 0 0 15px 0;
             font-weight: normal;
         }
@@ -123,7 +126,7 @@
             color: transparent;
             position: absolute;
             bottom: 10px;
-            background-image: radial-gradient(circle at center, var(--color-magenta) 0, var(--color-magenta) 3px, transparent 3px, transparent 100%),
+            background-image: radial-gradient(circle at center, var(--color-light-orange) 0, var(--color-light-orange) 3px, transparent 3px, transparent 100%),
                               radial-gradient(circle at center, var(--color-orange) 0, var(--color-orange) 2px, transparent 2px, transparent 100%),
                               radial-gradient(circle at center, var(--color-blue) 0, var(--color-blue) 2px, transparent 2px, transparent 100%);
             background-position: 0 0, 15px 0, 30px 0;
@@ -131,7 +134,7 @@
             background-size: 10px 10px;
             width: 40px; height: 10px;
             left: calc(50% - 20px);
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         .envelope-front {
@@ -153,11 +156,14 @@
             left: 0;
             width: 320px;
             height: 120px;
-            z-index: 3;
             transform-origin: top;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0.7s;
             pointer-events: none;
             filter: drop-shadow(0 4px 4px var(--color-env-shadow));
+            
+            /* CLOSING ANIMATION (Default State) */
+            /* Z-index returns to 3 immediately, but wait 0.9s for letter to slide down before flipping back */
+            z-index: 3;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.9s, z-index 0s 0s;
         }
 
         .flap {
@@ -168,37 +174,43 @@
             border-color: var(--color-env-flap) transparent transparent transparent;
         }
 
-        /* Realistic Wax Stamp */
+        /* Highly Realistic Wax Stamp */
         .wax-stamp {
             position: absolute;
-            top: 90px;
-            left: 130px;
-            width: 60px;
-            height: 60px;
-            border-radius: 52% 48% 55% 45% / 48% 53% 47% 52%;
-            background: radial-gradient(circle at 35% 35%, #f4a284 0%, #e38a6a 30%, #c86946 70%, #a44d2d 100%);
+            top: 85px;
+            left: 128px;
+            width: 64px;
+            height: 64px;
+            /* Irregular, organic blob shape */
+            border-radius: 49% 51% 54% 46% / 52% 48% 53% 47%;
+            /* Complex lighting gradient: deep shadows at the bottom right, bright highlight top left */
+            background: radial-gradient(circle at 30% 30%, #f4b297 0%, #e38a6a 20%, #c86946 50%, #873617 90%, #5e240e 100%);
             box-shadow: 
-                2px 3px 5px rgba(0,0,0,0.3),
-                inset 0 -4px 6px rgba(130, 40, 0, 0.6),
-                inset 0 4px 6px rgba(255, 255, 255, 0.4);
+                3px 4px 6px rgba(0,0,0,0.35),
+                inset -2px -4px 6px rgba(90, 30, 0, 0.7),
+                inset 2px 4px 8px rgba(255, 200, 180, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Inner pressed rim */
         .wax-stamp::before {
             content: '';
             position: absolute;
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            border: 1px solid rgba(160, 60, 0, 0.3);
+            width: 48px;
+            height: 48px;
+            border-radius: 50% 52% 48% 50%;
+            border: 1.5px solid rgba(130, 40, 0, 0.4);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
             box-shadow: 
-                inset 0 2px 5px rgba(0,0,0,0.2), 
-                0 1px 2px rgba(255,255,255,0.2);
+                inset 1px 2px 4px rgba(0,0,0,0.4), 
+                inset -1px -1px 2px rgba(255,255,255,0.2),
+                0 1px 1px rgba(255,255,255,0.2);
             transform: translate(-1px, -1px);
         }
 
+        /* Highly Embossed Stamped Text */
         .wax-stamp::after {
             content: 'D&D';
             position: relative;
@@ -206,24 +218,41 @@
             color: #d17351;
             font-family: 'Great Vibes', cursive;
             font-size: 1.5rem;
+            /* Inset shadow effect to make it look deeply stamped into the wax */
             text-shadow: 
-                -1px -1px 1px rgba(255, 255, 255, 0.3), 
-                1px 1px 2px rgba(100, 30, 0, 0.7);
+                -1px -1px 1px rgba(255, 220, 200, 0.4), 
+                1px 2px 2px rgba(80, 20, 0, 0.8),
+                0 0 1px rgba(100, 30, 0, 0.5);
         }
 
-        /* --- Animation States --- */
+        /* Glossy reflection on the wax */
+        .wax-highlight {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            width: 15px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            filter: blur(1px);
+            pointer-events: none;
+        }
+
+        /* --- OPENING ANIMATION STATES --- */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
-            z-index: 0; /* Drops behind the envelope back so it doesn't clip the letter */
+            /* Z-index drops to 0 at 0.7s (after the flap flips completely) */
+            z-index: 0; 
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0s, z-index 0s 0.7s;
         }
 
         .envelope-wrapper.open .letter {
             opacity: 1;
-            /* Smoothly slides up out of the pocket */
             transform: translateY(-80px); 
-            /* Pops in front of the bottom pocket once it slides up */
+            /* Z-index pops to 4 at 1.1s (as it clears the front pocket) */
             z-index: 4; 
-            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s, opacity 0.8s ease 0.5s, z-index 0s 1.2s;
+            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s, opacity 0.8s ease 0.5s, z-index 0s 1.1s;
         }
 
         .instructions {
@@ -251,6 +280,7 @@
 </head>
 <body>
 
+    <!-- Hidden audio element. Ensure you have a file named 'wedding-music.mp3' in the same folder -->
     <audio id="weddingMusic" loop>
         <source src="wedding-music.mp3" type="audio/mpeg">
     </audio>
@@ -268,26 +298,45 @@
         
         <div class="flap-wrapper">
             <div class="flap"></div>
-            <div class="wax-stamp"></div>
+            <div class="wax-stamp">
+                <div class="wax-highlight"></div>
+            </div>
         </div>
     </div>
 
-    <div class="instructions">Tap to Open</div>
+    <div class="instructions" id="instructionText">Tap to Open</div>
 
     <script>
         const envelope = document.getElementById('envelope');
         const audio = document.getElementById('weddingMusic');
+        const instructionText = document.getElementById('instructionText');
 
         envelope.addEventListener('click', () => {
-            if (!envelope.classList.contains('open')) {
-                // Trigger CSS animations
+            const isOpen = envelope.classList.contains('open');
+
+            if (!isOpen) {
+                // OPENING ACTION
                 envelope.classList.add('open');
+                instructionText.style.opacity = '0';
                 
-                // Set volume and play music
-                audio.volume = 0.5; // 50% volume so it's not too loud
+                audio.volume = 0.5; 
                 audio.play().catch(error => {
                     console.log("Audio playback requires user interaction and a valid file.", error);
                 });
+            } else {
+                // CLOSING ACTION
+                envelope.classList.remove('open');
+                
+                // Pause the music when closed (optional, remove this line if you want it to keep playing)
+                audio.pause();
+                
+                // Bring instructions back after it fully closes (approx 1.6s total animation time)
+                setTimeout(() => {
+                    if (!envelope.classList.contains('open')) {
+                        instructionText.innerText = "Tap to Reopen";
+                        instructionText.style.opacity = '1';
+                    }
+                }, 1600);
             }
         });
     </script>
