@@ -39,6 +39,11 @@
             height: 220px;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-5px);
         }
 
         .envelope-back {
@@ -48,11 +53,12 @@
             background-color: var(--color-env-pocket);
             border-radius: 4px;
             box-shadow: 0 15px 30px var(--color-env-shadow);
+            z-index: 0;
         }
 
         .letter {
             position: absolute;
-            bottom: 5px;
+            bottom: 10px;
             left: 10px;
             width: 300px;
             height: 200px;
@@ -66,10 +72,12 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
-            z-index: 1;
+            z-index: 1; /* Sits behind the front pocket */
+            
+            /* Initial state: deep inside the envelope */
             opacity: 0;
-            transform: translateY(0);
-            transition: transform 0.8s ease 0.4s, opacity 0.5s ease 0.4s;
+            transform: translateY(20px);
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s, opacity 0.8s ease 0.4s;
         }
 
         .letter h2 {
@@ -147,7 +155,7 @@
             height: 120px;
             z-index: 3;
             transform-origin: top;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0.6s;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0.7s;
             pointer-events: none;
             filter: drop-shadow(0 4px 4px var(--color-env-shadow));
         }
@@ -167,11 +175,8 @@
             left: 130px;
             width: 60px;
             height: 60px;
-            /* Organic, slightly irregular shape */
             border-radius: 52% 48% 55% 45% / 48% 53% 47% 52%;
-            /* 3D gradient for lighting */
             background: radial-gradient(circle at 35% 35%, #f4a284 0%, #e38a6a 30%, #c86946 70%, #a44d2d 100%);
-            /* Complex shadows: drop shadow + inner shading/highlighting for depth */
             box-shadow: 
                 2px 3px 5px rgba(0,0,0,0.3),
                 inset 0 -4px 6px rgba(130, 40, 0, 0.6),
@@ -181,7 +186,6 @@
             align-items: center;
         }
 
-        /* Inner embossed ridge */
         .wax-stamp::before {
             content: '';
             position: absolute;
@@ -192,34 +196,34 @@
             box-shadow: 
                 inset 0 2px 5px rgba(0,0,0,0.2), 
                 0 1px 2px rgba(255,255,255,0.2);
-            /* Slightly offset to match the lighting direction */
             transform: translate(-1px, -1px);
         }
 
-        /* Embossed Stamped Text */
         .wax-stamp::after {
             content: 'D&D';
             position: relative;
             z-index: 1;
-            color: #d17351; /* Color matches the wax for embossing effect */
+            color: #d17351;
             font-family: 'Great Vibes', cursive;
             font-size: 1.5rem;
-            /* Highlight on top/left, shadow on bottom/right creates an indented stamp effect */
             text-shadow: 
                 -1px -1px 1px rgba(255, 255, 255, 0.3), 
                 1px 1px 2px rgba(100, 30, 0, 0.7);
         }
 
+        /* --- Animation States --- */
         .envelope-wrapper.open .flap-wrapper {
             transform: rotateX(180deg);
-            z-index: 0;
+            z-index: 0; /* Drops behind the envelope back so it doesn't clip the letter */
         }
 
         .envelope-wrapper.open .letter {
             opacity: 1;
-            transform: perspective(1000px) rotateX(5deg) translateY(-25px); 
-            z-index: 4;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, opacity 0.5s ease 0.4s, z-index 0s 1s;
+            /* Smoothly slides up out of the pocket */
+            transform: translateY(-80px); 
+            /* Pops in front of the bottom pocket once it slides up */
+            z-index: 4; 
+            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s, opacity 0.8s ease 0.5s, z-index 0s 1.2s;
         }
 
         .instructions {
@@ -231,10 +235,11 @@
             text-transform: uppercase;
             animation: pulse 2s infinite;
             pointer-events: none;
+            transition: opacity 0.5s;
         }
 
         .envelope-wrapper.open ~ .instructions {
-            display: none;
+            opacity: 0;
         }
 
         @keyframes pulse {
@@ -246,7 +251,11 @@
 </head>
 <body>
 
-    <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+    <audio id="weddingMusic" loop>
+        <source src="wedding-music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="envelope-wrapper" id="envelope">
         <div class="envelope-back"></div>
         
         <div class="letter">
@@ -265,5 +274,22 @@
 
     <div class="instructions">Tap to Open</div>
 
+    <script>
+        const envelope = document.getElementById('envelope');
+        const audio = document.getElementById('weddingMusic');
+
+        envelope.addEventListener('click', () => {
+            if (!envelope.classList.contains('open')) {
+                // Trigger CSS animations
+                envelope.classList.add('open');
+                
+                // Set volume and play music
+                audio.volume = 0.5; // 50% volume so it's not too loud
+                audio.play().catch(error => {
+                    console.log("Audio playback requires user interaction and a valid file.", error);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
