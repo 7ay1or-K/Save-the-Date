@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date | Deimante & Dominic</title>
     <style>
-        /* Import elegant fonts for the wedding aesthetic */
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;700&display=swap');
 
         body {
             margin: 0;
@@ -15,7 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f7f3ec; /* Soft, warm off-white background */
+            background-color: #f7f3ec;
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
         }
@@ -25,7 +24,6 @@
             width: 320px;
             height: 220px;
             cursor: pointer;
-            /* Removes the default tap highlight box on mobile devices */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -55,7 +53,6 @@
             padding: 20px;
             box-sizing: border-box;
             z-index: 1;
-            /* Animation timing: Wait for flap to open before sliding up */
             transition: transform 0.8s ease 0.4s, z-index 0s 0.8s;
         }
 
@@ -82,7 +79,6 @@
             font-weight: 400;
         }
 
-        /* Using CSS border triangles to create the front envelope pockets */
         .envelope-front {
             position: absolute;
             bottom: 0;
@@ -93,45 +89,67 @@
             border-style: solid;
             border-width: 0 160px 120px 160px;
             border-color: transparent #e1d4c1 #d4c6b3 #e1d4c1;
-            pointer-events: none; /* Let clicks pass through to the wrapper */
+            pointer-events: none;
         }
 
-        /* The top flap of the envelope */
-        .flap {
+        /* Wrapper to hold both the top flap and the wax seal */
+        .flap-wrapper {
             position: absolute;
             top: 0;
             left: 0;
-            width: 0;
-            height: 0;
+            width: 320px;
+            height: 120px;
             z-index: 3;
-            border-style: solid;
-            border-width: 120px 160px 0 160px;
-            border-color: #dcd0bf transparent transparent transparent;
             transform-origin: top;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0.6s;
             pointer-events: none;
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.05));
         }
 
-        /* =========================================
-           INTERACTION STATES (Triggered by JS toggle)
-           ========================================= */
-        
-        /* Flap flips open */
-        .envelope-wrapper.open .flap {
-            transform: rotateX(180deg);
-            z-index: 0; /* Drops behind the letter so it doesn't clip */
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .flap {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 120px 160px 0 160px;
+            border-color: #dcd0bf transparent transparent transparent;
         }
 
-        /* Letter slides out and pops to the front */
+        /* Orange Wax Stamp */
+        .wax-stamp {
+            position: absolute;
+            top: 100px; /* Positioned at the point of the flap */
+            left: 135px; /* Center of the 320px width minus half stamp width */
+            width: 50px;
+            height: 50px;
+            background-color: #d35400;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 0 8px rgba(160, 64, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #e67e22;
+        }
+
+        .wax-stamp::after {
+            content: 'D&D';
+            color: #fce2c4;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* Interactions */
+        .envelope-wrapper.open .flap-wrapper {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
         .envelope-wrapper.open .letter {
             transform: translateY(-130px);
-            z-index: 4; /* Pops in front of the bottom flaps for readability */
+            z-index: 4;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, z-index 0s 1s;
         }
 
-        /* Small pulsing text to indicate it's interactive */
         .instructions {
             position: absolute;
             bottom: 15%;
@@ -144,7 +162,7 @@
         }
 
         .envelope-wrapper.open ~ .instructions {
-            display: none; /* Hides instructions once opened */
+            display: none;
         }
 
         @keyframes pulse {
@@ -156,8 +174,11 @@
 </head>
 <body>
 
-    <!-- onclick toggles the 'open' class to trigger the CSS animations -->
-    <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+    <audio id="weddingMusic" loop>
+        <source src="wedding-music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="envelope-wrapper" onclick="openEnvelope(this)">
         <div class="envelope-back"></div>
         
         <div class="letter">
@@ -167,10 +188,31 @@
         </div>
         
         <div class="envelope-front"></div>
-        <div class="flap"></div>
+        
+        <div class="flap-wrapper">
+            <div class="flap"></div>
+            <div class="wax-stamp"></div>
+        </div>
     </div>
 
     <div class="instructions">Tap to Open</div>
 
+    <script>
+        function openEnvelope(element) {
+            // Check if already open to prevent restarting animation/audio
+            if (!element.classList.contains('open')) {
+                element.classList.add('open');
+                
+                // Fetch the audio element and play it
+                const audio = document.getElementById('weddingMusic');
+                audio.volume = 0.6; // Adjust volume if needed
+                
+                // Play audio (browser requires user interaction first, which the tap provides)
+                audio.play().catch(error => {
+                    console.log("Audio playback failed. Ensure the audio source is correct.", error);
+                });
+            }
+        }
+    </script>
 </body>
 </html>
