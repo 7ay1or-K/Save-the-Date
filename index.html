@@ -357,21 +357,27 @@
                 envelope.classList.add('open');
                 instructionText.style.opacity = '0';
                 
+                // Set audio to start at exactly 13 seconds
+                audio.currentTime = 13;
                 audio.volume = 0.5; 
-                audio.play().catch(error => {
-                    console.log("Audio playback requires user interaction and a valid file.", error);
-                });
-
-                // Confetti now appears much earlier (at 800ms) right as the letter starts emerging
-                setTimeout(() => {
-                    confetti({
-                        particleCount: 150,
-                        spread: 80,
-                        origin: { y: 0.6 },
-                        colors: confettiColors,
-                        disableForReducedMotion: true
+                
+                // Play audio and sync confetti with the actual start of playback
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Confetti triggers exactly when the song successfully starts playing
+                        confetti({
+                            particleCount: 150,
+                            spread: 80,
+                            origin: { y: 0.6 },
+                            colors: confettiColors,
+                            disableForReducedMotion: true
+                        });
+                    }).catch(error => {
+                        console.log("Audio playback requires user interaction and a valid file.", error);
                     });
-                }, 800); 
+                }
 
             } else {
                 envelope.classList.remove('open');
